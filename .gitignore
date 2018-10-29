@@ -1,0 +1,16 @@
+*.iml
+/.gradle
+/local.properties
+/.idea/
+.DS_Store
+Thumbs.db
+build/
+/captures
+.externalNativeBuild/
+/private
+/artifacts
+/fastlane/report.xml
+/fastlane/build/
+google-services.json
+/army-knife
+*.hprof

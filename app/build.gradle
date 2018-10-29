@@ -1,0 +1,83 @@
+/**
+ * apply configurations.
+ */
+apply from: "../configurations/artifacts_configure.groovy"
+apply from: "../configurations/build_configure.groovy"
+apply from: "../configurations/armyknife_configure.groovy"
+
+ext.app_version_name = {
+    if (build_on_ci) {
+        return "${app_version_name_base}.${build_number}"
+    } else {
+        return "${app_version_name_base}.local"
+    }
+}()
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath('com.github.ben-manes:gradle-versions-plugin:0.20.0')
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: "com.github.ben-manes.versions"   // dependencies version check
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId app_application_id_base
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode build_number
+        versionName app_version_name
+        multiDexEnabled true
+        aaptOptions.cruncherEnabled android_aapt_cruncher
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // for *.java options
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    // for Kotlin-Android
+    androidExtensions {
+        experimental = true
+        features = ["parcelize"]
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+    packagingOptions {
+        exclude 'META-INF/**_debug.kotlin_module'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true  // support robolectric
+        }
+    }
+}
+
+dependencies {
+    implementation project(':app_components')
+
+    ArmyKnifeLinker.allTestImplementationToModule(project, "army-knife-android-junit4")
+    UnitTestDependenciesLinker.link(project)
+}
