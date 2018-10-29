@@ -1,0 +1,71 @@
+/**
+ * Build on Android Studio flag.
+ * If this value is true then, Faster build speed.
+ *
+ * You must add build-options "-PdevBuild -Dorg.gradle.caching=true" in Android Studio settings.
+ *
+ * @author @eaglesakura
+ * @link https://github.com/eaglesakura/template-android-mvvm-bf
+ */
+ext.android_studio = rootProject.hasProperty("devBuild")
+
+/**
+ * Build target resource for debug build.
+ *
+ * @author @eaglesakura
+ * @link https://github.com/eaglesakura/template-android-mvvm-bf
+ */
+ext.android_assemble_dpi = "xxhdpi"
+ext.android_build_date = "\"${new Date()}\""
+if (android_studio) {
+    ext.android_aapt_cruncher = false
+} else {
+    ext.android_aapt_cruncher = true
+}
+
+/**
+ * Number of build.
+ * This value is auto-increment on CircleCI.
+ * When build on local(build on Developer's PC) then, this value is always 1.
+ *
+ * @author @eaglesakura
+ * @link https://github.com/eaglesakura/template-android-mvvm-bf
+ */
+ext.build_number = {
+    try {
+        def BUILD_NUMBER_FILE = rootProject.file(".configs/secrets/build-number.env")
+        if (BUILD_NUMBER_FILE.file) {
+            return BUILD_NUMBER_FILE.text as int
+        }
+    } catch (ignored) {
+    }
+
+    if (System.env.CIRCLE_BUILD_NUM != null) {
+        return System.env.CIRCLE_BUILD_NUM as int
+    } else {
+        return 1
+    }
+}()
+
+/**
+ * CircleCI(or such else) flag.
+ *
+ * @author @eaglesakura
+ * @link https://github.com/eaglesakura/template-android-mvvm-bf
+ */
+ext.build_on_ci = System.env.CIRCLE_BUILD_NUM != null
+
+/**
+ * Max memory for assemble a dex file.
+ *
+ * @author @eaglesakura
+ * @link https://github.com/eaglesakura/template-android-mvvm-bf
+ */
+ext.dex_max_heap_on_ci = "${System.env.MAX_DEX_HEAP_SIZE}"
+
+/**
+ * apply user configurations.
+ */
+if (rootProject.file("private/configs.gradle").file) {
+    apply from: rootProject.file("private/configs.gradle")
+}

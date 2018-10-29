@@ -1,13 +1,34 @@
 /**
+ * Application version name(base).
+ *
+ * e.g.)
+ * versionName = "0.1.{build-number}.{flavor-name}"
+ *
+ * @author @eaglesakura
+ * @link https://github.com/eaglesakura/template-android-mvvm-bf
+ */
+ext.app_version_name_base = "0.1"
+
+/**
+ * Application ID for app.apk
+ * this id will use to url in Google Play.
+ *
+ * @author @eaglesakura
+ * @link https://github.com/eaglesakura/template-android-mvvm-bf
+ */
+ext.app_application_id_base = "com.eaglesakura.mvvm_bf_template"
+
+/**
  * apply configurations.
  */
-apply from: "../configurations/artifacts_configure.groovy"
-apply from: "../configurations/build_configure.groovy"
-apply from: "../configurations/armyknife_configure.groovy"
+apply from: "../configurations/environments.gradle"
+apply from: "../configurations/armyknife.gradle"
 
 ext.app_version_name = {
     if (build_on_ci) {
         return "${app_version_name_base}.${build_number}"
+    } else if (android_studio) {
+        return "${app_version_name_base}.studio"
     } else {
         return "${app_version_name_base}.local"
     }
@@ -15,10 +36,23 @@ ext.app_version_name = {
 
 buildscript {
     repositories {
+        google()
         jcenter()
+        maven { url 'https://maven.fabric.io/public' }  // Crashlytics
     }
     dependencies {
         classpath('com.github.ben-manes:gradle-versions-plugin:0.20.0')
+        classpath('android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0-alpha01') {
+            exclude group: "com.google.guava", module: "guava"
+            exclude group: "com.google.guava", module: "guava-jdk5"
+        }
+        classpath('com.google.guava:guava:24.1-jre') {
+            because "for 'navigation-safe-args-gradle-plugin'"
+        }
+        classpath 'com.google.gms:google-services:4.2.0'
+        classpath('io.fabric.tools:gradle:1.25.4') {
+            because 'for Crashlytics'
+        }
     }
 }
 
@@ -27,9 +61,19 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "com.github.ben-manes.versions"   // dependencies version check
+//apply plugin: 'io.fabric'                       // Crash reporting.
+
+println "app_version_name            : ${app_version_name}"
+println "android_studio              : ${android_studio}"
+println "android_build_date          : ${android_build_date}"
+println "android_assemble_dpi        : ${android_assemble_dpi}"
+println "android_aapt_cruncher       : ${android_aapt_cruncher}"
 
 android {
     compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+    aaptOptions.cruncherEnabled = android_aapt_cruncher
+
     defaultConfig {
         applicationId app_application_id_base
         minSdkVersion 21
@@ -38,7 +82,22 @@ android {
         versionName app_version_name
         multiDexEnabled true
         aaptOptions.cruncherEnabled android_aapt_cruncher
+
+        if (android_studio) {
+            resConfigs "ja", android_assemble_dpi
+        } else {
+            resConfigs "ja"
+        }
+
+        buildConfigField "String", "BUILD_DATE", android_build_date
+        buildConfigField "int", "BUILD_NUMBER", "${build_number}"
+        buildConfigField "boolean", "BUILD_FROM_CI", "${build_on_ci}"
+        buildConfigField "boolean", "RELEASE", "!DEBUG"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [
+                google_api_key: "@string/google_api_key"
+        ]
     }
 
     // for *.java options
@@ -57,14 +116,89 @@ android {
         enabled = true
     }
 
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+
     packagingOptions {
         exclude 'META-INF/**_debug.kotlin_module'
     }
 
     buildTypes {
+        /**
+         * Debug configuration.
+         */
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix ".debug"
+            ext.alwaysUpdateBuildId = false
+//            signingConfig signingConfigs.debug
+        }
+
+        /**
+         * Release configuration.
+         * Shrink with R8, Proguard has been ignored.
+         */
         release {
             minifyEnabled true
+            useProguard false
+//            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/**.properties'
+        exclude 'META-INF/**.version'
+        exclude 'META-INF/**.kotlin_module'
+        exclude 'META-INF/**.pro'
+        exclude 'META-INF/services/*.*'
+        exclude 'kotlin/**'
+        exclude "kotlinx/**"
+        exclude 'okhttp3/**'
+        exclude "**/**annotations.gwt.xml"
+        exclude "**/**-setter_store.bin"
+        exclude "**/**-layoutinfo.bin"
+        exclude "**/**-br.bin"
+        exclude "build-data.properties"
+        exclude "protobuf.meta"
+        exclude "org/apache/http/version.properties"
+        exclude "/*.properties"
+        exclude '/fabric/**'
+        exclude '/*.txt'
+    }
+
+    dexOptions {
+        if (build_on_ci) {
+            println "apply dex options [${dex_max_heap_on_ci}] for CI in ${project.name}"
+            javaMaxHeapSize = "${dex_max_heap_on_ci}"
+        }
+        if (!android_studio) {
+            println "apply dex options for Terminal in ${project.name}"
+            preDexLibraries = false
         }
     }
 
@@ -76,8 +210,57 @@ android {
 }
 
 dependencies {
-    implementation project(':app_components')
+    implementation project(':internal_domain')
+    implementation project(':internal_components_base')
+    implementation project(':internal_components_splash')
+    implementation "com.eaglesakura:army-knife-timber:$army_knife_version"
 
-    ArmyKnifeLinker.allTestImplementationToModule(project, "army-knife-android-junit4")
-    UnitTestDependenciesLinker.link(project)
+    implementation('androidx.databinding:databinding-runtime:3.2.1') {
+        because """
+            Below libraries has alpha-versions.
+        """
+        exclude group: 'androidx.lifecycle'
+        exclude group: 'androidx.arch.core'
+        exclude group: 'androidx.collection'
+    }
+    implementation("androidx.core:core:1.0.1") {
+        because "workaround for dependencies conflict."
+    }
+    implementation("androidx.appcompat:appcompat:1.0.2") {
+        because "workaround for dependencies conflict."
+    }
+    implementation("androidx.vectordrawable:vectordrawable:1.0.1") {
+        because "workaround for dependencies conflict."
+    }
+    implementation("androidx.arch.core:core-common:2.0.0") {
+        because "workaround for dependencies conflict."
+    }
+    implementation("androidx.lifecycle:lifecycle-common:2.0.0") {
+        because "workaround for dependencies conflict."
+    }
+    implementation("androidx.lifecycle:lifecycle-runtime:2.0.0") {
+        because "workaround for dependencies conflict."
+    }
+    implementation("androidx.collection:collection:1.0.0") {
+        because "workaround for dependencies conflict."
+    }
+
+    implementation "com.eaglesakura:army-knife-android-junit4:$army_knife_version"
+    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.19.1'
+    androidTestImplementation 'androidx.multidex:multidex:2.0.0'
+    androidTestImplementation 'androidx.multidex:multidex-instrumentation:2.0.0'
+    androidTestImplementation('androidx.databinding:databinding-runtime:3.2.1') {
+        because """
+                for DataBinding in Library Project with UnitTest.
+                Below libraries has alpha-versions.
+            """
+        exclude group: 'androidx.lifecycle'
+        exclude group: 'androidx.arch.core'
+        exclude group: 'androidx.collection'
+    }
+    kaptAndroidTest('com.android.databinding:compiler:3.2.1') {
+        because "for DataBinding in Library Project with UnitTest."
+    }
 }
+
+//apply plugin: 'com.google.gms.google-services'

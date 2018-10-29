@@ -1,0 +1,17 @@
+/**
+ * configuration for army-knife module.
+ *
+ * @author @eaglesakura
+ * @link https://github.com/eaglesakura/template-android-mvvm-bf
+ * @link https://github.com/eaglesakura/army-knife
+ */
+ext.army_knife_version = "1.1.7"
+
+if (hasProperty("overwrite_army_knife_version")) {
+    ext.army_knife_version = overwrite_army_knife_version
+    println "overwrite army_knife_version='${army_knife_version}'"
+}
+
+repositories {
+    maven { url 'https://dl.bintray.com/eaglesakura/maven/' }
+}

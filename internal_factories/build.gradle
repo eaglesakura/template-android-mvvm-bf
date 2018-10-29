@@ -1,0 +1,19 @@
+/**
+ * apply configurations.
+ */
+apply from: "../configurations/environments.gradle"
+apply from: "../configurations/armyknife.gradle"
+apply from: "../configurations/library_standard.gradle"
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath('com.github.ben-manes:gradle-versions-plugin:0.20.0')
+    }
+}
+
+dependencies {
+    api project(':internal_domain')
+}

@@ -1,0 +1,31 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+# good sample! https://qiita.com/matsuokah/items/06ff8b50c0e2be828786
+
+$test_targets=[
+    "internal_components_base",
+    "internal_components_splash",
+    "internal_domain",
+    "internal_domain_components",
+    "internal_factories"
+    ]
+$app_flavors=[
+    "",
+]
+$secret_files_bucket = "replace-to-bucket-name/path/to/files"
+
+import "./project.rb"
+import "./android.rb"

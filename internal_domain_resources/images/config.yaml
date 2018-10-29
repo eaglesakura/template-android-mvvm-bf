@@ -1,0 +1,23 @@
+# xpipeline mipmap --config path/to/this/config.yaml
+mipmap:
+  requests:
+    - path: drawable
+      platform: android
+      type: drawable
+      outpath: ../src/main/res
+      format: webp
+      convert_args:
+        - "-quality"
+        - "100"
+        - "-define"
+        - "webp:lossless=true"
+    - path: mipmap
+      platform: android
+      type: mipmap
+      outpath: ../src/main/res
+      format: webp
+      convert_args:
+        - "-quality"
+        - "100"
+        - "-define"
+        - "webp:lossless=true"
