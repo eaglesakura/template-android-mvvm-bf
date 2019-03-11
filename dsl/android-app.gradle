@@ -1,39 +1,3 @@
-/**
- * Application version name(base).
- *
- * e.g.)
- * versionName = "0.1.{build-number}.{flavor-name}"
- *
- * @author @eaglesakura
- * @link https://github.com/eaglesakura/template-android-mvvm-bf
- */
-ext.app_version_name_base = "0.1"
-
-/**
- * Application ID for app.apk
- * this id will use to url in Google Play.
- *
- * @author @eaglesakura
- * @link https://github.com/eaglesakura/template-android-mvvm-bf
- */
-ext.app_application_id_base = "com.eaglesakura.mvvm_bf_template"
-
-/**
- * apply configurations.
- */
-apply from: "../configurations/environments.gradle"
-apply from: "../configurations/armyknife.gradle"
-
-ext.app_version_name = {
-    if (build_on_ci) {
-        return "${app_version_name_base}.${build_number}"
-    } else if (android_studio) {
-        return "${app_version_name_base}.studio"
-    } else {
-        return "${app_version_name_base}.local"
-    }
-}()
-
 buildscript {
     repositories {
         google()
@@ -63,12 +27,6 @@ apply plugin: 'kotlin-kapt'
 apply plugin: "com.github.ben-manes.versions"   // dependencies version check
 //apply plugin: 'io.fabric'                       // Crash reporting.
 
-println "app_version_name            : ${app_version_name}"
-println "android_studio              : ${android_studio}"
-println "android_build_date          : ${android_build_date}"
-println "android_assemble_dpi        : ${android_assemble_dpi}"
-println "android_aapt_cruncher       : ${android_aapt_cruncher}"
-
 android {
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
@@ -81,7 +39,6 @@ android {
         versionCode build_number
         versionName app_version_name
         multiDexEnabled true
-        aaptOptions.cruncherEnabled android_aapt_cruncher
 
         if (android_studio) {
             resConfigs "ja", android_assemble_dpi
@@ -89,9 +46,9 @@ android {
             resConfigs "ja"
         }
 
-        buildConfigField "String", "BUILD_DATE", android_build_date
-        buildConfigField "int", "BUILD_NUMBER", "${build_number}"
-        buildConfigField "boolean", "BUILD_FROM_CI", "${build_on_ci}"
+        buildConfigField "String", "BUILD_DATE", "\"$build_date\""
+        buildConfigField "int", "BUILD_NUMBER", "$build_number"
+        buildConfigField "boolean", "BUILD_FROM_CI", "$build_on_ci"
         buildConfigField "boolean", "RELEASE", "!DEBUG"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -149,7 +106,6 @@ android {
          */
         release {
             minifyEnabled true
-            useProguard false
 //            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -210,11 +166,6 @@ android {
 }
 
 dependencies {
-    implementation project(':internal_domain')
-    implementation project(':internal_components_base')
-    implementation project(':internal_components_splash')
-    implementation "com.eaglesakura:army-knife-timber:$army_knife_version"
-
     implementation('androidx.databinding:databinding-runtime:3.2.1') {
         because """
             Below libraries has alpha-versions.
@@ -246,7 +197,7 @@ dependencies {
     }
 
     implementation "com.eaglesakura:army-knife-android-junit4:$army_knife_version"
-    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.19.1'
+    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.21.0'
     androidTestImplementation 'androidx.multidex:multidex:2.0.0'
     androidTestImplementation 'androidx.multidex:multidex-instrumentation:2.0.0'
     androidTestImplementation('androidx.databinding:databinding-runtime:3.2.1') {

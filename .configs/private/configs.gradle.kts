@@ -1,5 +1,7 @@
 // Your private configs to here.
 
+println("Apply 'configs.gradle.kts'")
+
 /**
  * Maven local repository.
  */
