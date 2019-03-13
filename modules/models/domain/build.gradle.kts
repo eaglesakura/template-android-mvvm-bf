@@ -1,5 +1,5 @@
-apply(from = "../dsl/environments.gradle.kts")
-apply(from = "../dsl/android-library.gradle")
+apply(from = rootProject.file("dsl/environments.gradle.kts"))
+apply(from = rootProject.file("dsl/android-library.gradle"))
 
 val extras = Extras(this)
 

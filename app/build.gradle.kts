@@ -41,8 +41,8 @@ dependencies {
     /**
      * Kotlin support
      */
-    "implementation"(project(":internal_domain"))
-    "implementation"(project(":internal_components_base"))
-    "implementation"(project(":internal_components_splash"))
+    "implementation"(project(":models:domain"))
+    "implementation"(project(":views:base"))
+    "implementation"(project(":views:splash"))
     "implementation"("com.eaglesakura:army-knife-timber:${extras.dependencies.armyKnifeVersion}")
 }

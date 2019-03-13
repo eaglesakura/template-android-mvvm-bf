@@ -1,9 +1,25 @@
 rootProject.buildFileName = "build.gradle.kts"
 
+fun includesInDirectory(root: String) {
+    file("modules/$root").listFiles()?.forEach { dir ->
+        if (!dir.isDirectory) {
+            return@forEach
+        }
+
+        val buildGradleKts = File(dir, "build.gradle.kts")
+        if (!buildGradleKts.isFile) {
+            return@forEach
+        }
+
+        val projectName = ":$root:${dir.name}"
+        println("include \"$projectName\"")
+        include(projectName)
+        project(projectName).projectDir = dir
+    }
+}
+
+includesInDirectory("commons")
+includesInDirectory("models")
+includesInDirectory("factories")
+includesInDirectory("views")
 include(":app")
-include(":internal_components_splash")
-include(":internal_components_base")
-include(":internal_domain")
-include(":internal_domain_components")
-include(":internal_domain_resources")
-include(":internal_factories")

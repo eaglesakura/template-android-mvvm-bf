@@ -1,5 +1,5 @@
-apply(from = "../dsl/environments.gradle.kts")
-apply(from = "../dsl/android-library.gradle")
+apply(from = rootProject.file("dsl/environments.gradle.kts"))
+apply(from = rootProject.file("dsl/android-library.gradle"))
 
 val extras = Extras(this)
 
@@ -7,9 +7,10 @@ dependencies {
     /**
      * Kotlin support
      */
-    "implementation"(project(":internal_domain_components"))
-    "implementation"(project(":internal_domain_resources"))
-    "implementation"(project(":internal_factories"))
+    "implementation"(project(":commons:resources"))
+    "implementation"(project(":views:components"))
+    "implementation"(project(":factories:factories"))
+
     // Utils
     "api"("com.eaglesakura:light-saver:1.4.2") {
         because("Bundle save / restore")
