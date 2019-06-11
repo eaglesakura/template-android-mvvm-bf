@@ -26,11 +26,9 @@ object Configure : Configuration.BaseConfiguration() {
             PackageManager.GET_ACTIVITIES or PackageManager.GET_SERVICES or PackageManager.GET_META_DATA
         )
 
-        val activityComponents = listOf<AndroidComponent<ActivityInfo>>(
-        )
+        val activityComponents = listOf<AndroidComponent<ActivityInfo>>()
 
-        val serviceComponents = listOf<AndroidComponent<ServiceInfo>>(
-        )
+        val serviceComponents = listOf<AndroidComponent<ServiceInfo>>()
 
         for (activityInfo in (packageInfo.activities ?: emptyArray())) {
             val component =

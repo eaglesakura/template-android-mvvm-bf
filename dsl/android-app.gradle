@@ -87,6 +87,7 @@ android {
 
     packagingOptions {
         exclude 'META-INF/**_debug.kotlin_module'
+        pickFirst 'META-INF/atomicfu.kotlin_module'
     }
 
     buildTypes {
@@ -166,52 +167,31 @@ android {
 }
 
 dependencies {
-    implementation('androidx.databinding:databinding-runtime:3.2.1') {
-        because """
-            Below libraries has alpha-versions.
-        """
-        exclude group: 'androidx.lifecycle'
-        exclude group: 'androidx.arch.core'
-        exclude group: 'androidx.collection'
+    /**
+     * for Tests (or Android Tests)
+     */
+    testImplementation 'org.robolectric:robolectric:4.2.1'
+    testImplementation "org.mockito:mockito-core:2.27.0"
+    androidTestImplementation 'androidx.multidex:multidex:2.0.1'
+    androidTestImplementation 'androidx.multidex:multidex-instrumentation:2.0.0'
+    androidTestImplementation "org.mockito:mockito-core:2.27.0"
+    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.25.0'
+    testImplementation("net.bytebuddy:byte-buddy:1.8.15")
+    androidTestImplementation("net.bytebuddy:byte-buddy:1.8.15")
+    testImplementation("com.eaglesakura.armyknife.armyknife-jetpack:armyknife-jetpack:1.3.1")
+    testImplementation("com.eaglesakura.armyknife.armyknife-android-junit4:armyknife-android-junit4:1.3.0") {
+        exclude(group: "org.mockito", module: "mockito-core")
     }
-    implementation("androidx.core:core:1.0.1") {
-        because "workaround for dependencies conflict."
-    }
-    implementation("androidx.appcompat:appcompat:1.0.2") {
-        because "workaround for dependencies conflict."
-    }
-    implementation("androidx.vectordrawable:vectordrawable:1.0.1") {
-        because "workaround for dependencies conflict."
-    }
-    implementation("androidx.arch.core:core-common:2.0.0") {
-        because "workaround for dependencies conflict."
-    }
-    implementation("androidx.lifecycle:lifecycle-common:2.0.0") {
-        because "workaround for dependencies conflict."
-    }
-    implementation("androidx.lifecycle:lifecycle-runtime:2.0.0") {
-        because "workaround for dependencies conflict."
-    }
-    implementation("androidx.collection:collection:1.0.0") {
-        because "workaround for dependencies conflict."
+    androidTestImplementation("com.eaglesakura.armyknife.armyknife-jetpack:armyknife-jetpack:1.3.1")
+    androidTestImplementation("com.eaglesakura.armyknife.armyknife-android-junit4:armyknife-android-junit4:1.3.0") {
+        exclude(group: "org.mockito", module: "mockito-core")
     }
 
-    implementation "com.eaglesakura:army-knife-android-junit4:$army_knife_version"
-    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.21.0'
-    androidTestImplementation 'androidx.multidex:multidex:2.0.0'
-    androidTestImplementation 'androidx.multidex:multidex-instrumentation:2.0.0'
-    androidTestImplementation('androidx.databinding:databinding-runtime:3.2.1') {
-        because """
-                for DataBinding in Library Project with UnitTest.
-                Below libraries has alpha-versions.
-            """
-        exclude group: 'androidx.lifecycle'
-        exclude group: 'androidx.arch.core'
-        exclude group: 'androidx.collection'
-    }
-    kaptAndroidTest('com.android.databinding:compiler:3.2.1') {
-        because "for DataBinding in Library Project with UnitTest."
-    }
+    testImplementation("androidx.databinding:databinding-runtime:$android_studio_version")
+    kaptTest("com.android.databinding:compiler:$android_studio_version")
+
+    androidTestImplementation("androidx.databinding:databinding-runtime:$android_studio_version")
+    kaptAndroidTest("com.android.databinding:compiler:$android_studio_version")
 }
 
 //apply plugin: 'com.google.gms.google-services'

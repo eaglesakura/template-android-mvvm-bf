@@ -7,5 +7,5 @@ dependencies {
     /**
      * Kotlin support
      */
-    "api"(project(":models:domain"))
+    "api"(project(":models-domain"))
 }

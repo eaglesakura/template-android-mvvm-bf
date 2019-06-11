@@ -9,8 +9,7 @@ import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 
 internal object ApplicationConfigure : Configuration.BaseConfiguration() {
-    override val dependencies: List<Configuration> = listOf(
-    )
+    override val dependencies: List<Configuration> = listOf()
 
     override fun onInitialize(application: Application) {
         internal.micromodules.components.base.Configure.reportError = this::reportError

@@ -1,20 +1,16 @@
 import java.nio.charset.Charset
 
+
 /**
- * configuration for army-knife module.
+ * Build on Android Studio flag.
+ * If this value is true then, Faster build speed.
+ *
+ * You must add build-options "-PdevBuild -Dorg.gradle.caching=true" in Android Studio settings.
  *
  * @author @eaglesakura
  * @link https://github.com/eaglesakura/template-android-mvvm-bf
- * @link https://github.com/eaglesakura/army-knife
  */
-repositories {
-    maven(url = "https://dl.bintray.com/eaglesakura/maven/")
-}
-extra["army_knife_version"] = if (hasProperty("overwrite_army_knife_version")) {
-    "${properties["overwrite_army_knife_version"]}"
-} else {
-    "1.1.9"
-}
+extra["android_studio"] = hasProperty("devBuild")
 
 /**
  * Build target resource for debug build.
@@ -27,6 +23,7 @@ extra["android_assemble_dpi"] = if (hasProperty("android_assemble_dpi")) {
 } else {
     "xxhdpi"
 }
+
 extra["android_aapt_cruncher"] = try {
     extra["android_studio"] != null
 } catch (e: Throwable) {
@@ -68,6 +65,11 @@ extra["dex_max_heap_on_ci"] = System.getenv("MAX_DEX_HEAP_SIZE") ?: "2g"
 /**
  * apply user configurations.
  */
-if (rootProject.file("private/configs.gradle.kts").isFile) {
-    apply(from = rootProject.file("private/configs.gradle.kts"))
+arrayOf(
+        rootProject.file("private/configs.gradle.kts"),
+        rootProject.file("private/configs.gradle")
+).forEach { file ->
+    if (file.isFile) {
+        apply(from = file)
+    }
 }

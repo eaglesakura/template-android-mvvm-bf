@@ -11,7 +11,11 @@ fun includesInDirectory(root: String) {
             return@forEach
         }
 
-        val projectName = ":$root:${dir.name}"
+        val projectName = if (dir.name == root) {
+            ":$root"
+        } else {
+            ":$root-${dir.name}"
+        }
         println("include \"$projectName\"")
         include(projectName)
         project(projectName).projectDir = dir
@@ -21,5 +25,5 @@ fun includesInDirectory(root: String) {
 includesInDirectory("commons")
 includesInDirectory("models")
 includesInDirectory("factories")
-includesInDirectory("views")
+includesInDirectory("components")
 include(":app")

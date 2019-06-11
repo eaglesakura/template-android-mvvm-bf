@@ -8,9 +8,7 @@ import com.eaglesakura.template.domain.modules.Configuration
  */
 object Configure : Configuration.BaseConfiguration() {
 
-    override val dependencies: List<Configuration> = listOf(
-
-    )
+    override val dependencies: List<Configuration> = listOf()
 
     override fun onInitialize(application: Application) {
     }

@@ -1,4 +1,3 @@
-apply(from = rootProject.file("dsl/environments.gradle.kts"))
 apply(from = rootProject.file("dsl/android-library.gradle"))
 
 val extras = Extras(this)
@@ -7,9 +6,9 @@ dependencies {
     /**
      * Kotlin support
      */
-    "implementation"(project(":commons:resources"))
-    "implementation"(project(":views:components"))
-    "implementation"(project(":factories:factories"))
+    "implementation"(project(":commons-resources"))
+    "implementation"(project(":models-components"))
+    "implementation"(project(":factories"))
 
     // Utils
     "api"("com.eaglesakura:light-saver:1.4.2") {
@@ -20,12 +19,12 @@ dependencies {
         because("onActivityResult handler with Annotation.")
     }
 
-    "implementation"("com.eaglesakura:kerberus:${extras.dependencies.armyKnifeVersion}")
-    "implementation"("com.eaglesakura:army-knife:${extras.dependencies.armyKnifeVersion}")
-    "implementation"("com.eaglesakura:army-knife-reactivex:${extras.dependencies.armyKnifeVersion}")
-    "implementation"("com.eaglesakura:firearm:${extras.dependencies.armyKnifeVersion}")
-    "implementation"("com.eaglesakura:firearm-channel:${extras.dependencies.armyKnifeVersion}")
-    "implementation"("com.eaglesakura:firearm-event:${extras.dependencies.armyKnifeVersion}")
+    "implementation"("com.eaglesakura.firearm.kerberus:kerberus:1.3.0")
+    "implementation"("com.eaglesakura.armyknife.armyknife-jetpack:armyknife-jetpack:1.3.1")
+    "implementation"("com.eaglesakura.armyknife.armyknife-reactivex:armyknife-reactivex:1.3.0")
+    "implementation"("com.eaglesakura.firearm.firearm-experimental:firearm-experimental:1.3.0")
+    "implementation"("com.eaglesakura.firearm.firearm-channel:firearm-channel:1.3.0")
+    "implementation"("com.eaglesakura.firearm.firearm-event:firearm-event:1.3.0")
 
     /**
      * Support Libraries

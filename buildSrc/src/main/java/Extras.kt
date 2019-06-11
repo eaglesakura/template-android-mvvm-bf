@@ -60,8 +60,6 @@ class Extras(
     }
 
     inner class Dependencies {
-        val armyKnifeVersion
-            get() = get("army_knife_version") as String
     }
 
     inner class Build {
