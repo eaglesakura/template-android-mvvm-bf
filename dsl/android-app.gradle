@@ -1,25 +1,3 @@
-buildscript {
-    repositories {
-        google()
-        jcenter()
-        maven { url 'https://maven.fabric.io/public' }  // Crashlytics
-    }
-    dependencies {
-        classpath('com.github.ben-manes:gradle-versions-plugin:0.20.0')
-        classpath('android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0-alpha01') {
-            exclude group: "com.google.guava", module: "guava"
-            exclude group: "com.google.guava", module: "guava-jdk5"
-        }
-        classpath('com.google.guava:guava:24.1-jre') {
-            because "for 'navigation-safe-args-gradle-plugin'"
-        }
-        classpath 'com.google.gms:google-services:4.2.0'
-        classpath('io.fabric.tools:gradle:1.25.4') {
-            because 'for Crashlytics'
-        }
-    }
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -28,14 +6,11 @@ apply plugin: "com.github.ben-manes.versions"   // dependencies version check
 //apply plugin: 'io.fabric'                       // Crash reporting.
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
-    aaptOptions.cruncherEnabled = android_aapt_cruncher
-
+    compileSdkVersion 29
     defaultConfig {
         applicationId app_application_id_base
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode build_number
         versionName app_version_name
         multiDexEnabled true
@@ -55,6 +30,10 @@ android {
         manifestPlaceholders = [
                 google_api_key: "@string/google_api_key"
         ]
+    }
+
+    sourceSets {
+        androidTest.java.srcDirs += ["src/test/java"]
     }
 
     // for *.java options
@@ -167,31 +146,28 @@ android {
 }
 
 dependencies {
+    kapt("androidx.lifecycle:lifecycle-compiler:2.1.0-beta01")
+
     /**
      * for Tests (or Android Tests)
      */
-    testImplementation 'org.robolectric:robolectric:4.2.1'
+    testImplementation 'org.robolectric:robolectric:4.3'
     testImplementation "org.mockito:mockito-core:2.27.0"
-    androidTestImplementation 'androidx.multidex:multidex:2.0.1'
-    androidTestImplementation 'androidx.multidex:multidex-instrumentation:2.0.0'
-    androidTestImplementation "org.mockito:mockito-core:2.27.0"
-    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.25.0'
     testImplementation("net.bytebuddy:byte-buddy:1.8.15")
     androidTestImplementation("net.bytebuddy:byte-buddy:1.8.15")
-    testImplementation("com.eaglesakura.armyknife.armyknife-jetpack:armyknife-jetpack:1.3.1")
-    testImplementation("com.eaglesakura.armyknife.armyknife-android-junit4:armyknife-android-junit4:1.3.0") {
-        exclude(group: "org.mockito", module: "mockito-core")
-    }
-    androidTestImplementation("com.eaglesakura.armyknife.armyknife-jetpack:armyknife-jetpack:1.3.1")
-    androidTestImplementation("com.eaglesakura.armyknife.armyknife-android-junit4:armyknife-android-junit4:1.3.0") {
-        exclude(group: "org.mockito", module: "mockito-core")
-    }
 
-    testImplementation("androidx.databinding:databinding-runtime:$android_studio_version")
-    kaptTest("com.android.databinding:compiler:$android_studio_version")
-
-    androidTestImplementation("androidx.databinding:databinding-runtime:$android_studio_version")
-    kaptAndroidTest("com.android.databinding:compiler:$android_studio_version")
+    androidTestImplementation "org.mockito:mockito-core:2.27.0"
+    androidTestImplementation "com.linkedin.dexmaker:dexmaker-mockito:2.25.0"
+    androidTestImplementation 'androidx.multidex:multidex:2.0.1'
+    androidTestImplementation 'androidx.multidex:multidex-instrumentation:2.0.0'
+    testImplementation("com.eaglesakura.armyknife.armyknife-android-junit4:armyknife-android-junit4:1.3.2") {
+        exclude(group: "org.mockito", module: "mockito-core")
+        exclude(group: "androidx.activity")
+    }
+    androidTestImplementation("com.eaglesakura.armyknife.armyknife-android-junit4:armyknife-android-junit4:1.3.2") {
+        exclude(group: "org.mockito", module: "mockito-core")
+        exclude(group: "androidx.activity")
+    }
 }
 
 //apply plugin: 'com.google.gms.google-services'

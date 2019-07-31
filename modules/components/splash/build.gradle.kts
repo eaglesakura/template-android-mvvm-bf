@@ -5,5 +5,5 @@ val extras = Extras(this)
 dependencies {
     "implementation"(project(":factories"))
     "implementation"(project(":components-base"))
-    "implementation"("com.eaglesakura.armyknife.armyknife-jetpack:armyknife-jetpack:1.3.1")
+    "implementation"("com.eaglesakura.armyknife.armyknife-jetpack:armyknife-jetpack:1.3.14")
 }

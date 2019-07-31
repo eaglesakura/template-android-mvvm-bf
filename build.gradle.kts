@@ -1,9 +1,9 @@
 import java.util.*
 
 buildscript {
-    extra["kotlin_version"] = "1.3.31"
-    extra["kotlin_coroutines_version"] = "1.2.0"
-    extra["android_studio_version"] = "3.5.0-beta04"
+    extra["kotlin_version"] = "1.3.41"
+    extra["kotlin_coroutines_version"] = "1.2.2"
+    extra["android_studio_version"] = "3.5.0-rc01"
     extra["build_date"] = java.util.Date()
 
     repositories {

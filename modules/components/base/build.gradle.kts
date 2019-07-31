@@ -10,20 +10,10 @@ dependencies {
     "implementation"(project(":models-components"))
     "implementation"(project(":factories"))
 
-    // Utils
-    "api"("com.eaglesakura:light-saver:1.4.2") {
-        because("Bundle save / restore")
-        exclude(group = "com.google.code.gson")
-    }
-    "api"("com.eaglesakura:onactivityresult-invoke:1.3.1") {
-        because("onActivityResult handler with Annotation.")
-    }
-
-    "implementation"("com.eaglesakura.firearm.kerberus:kerberus:1.3.0")
-    "implementation"("com.eaglesakura.armyknife.armyknife-jetpack:armyknife-jetpack:1.3.1")
+    "implementation"("com.eaglesakura.armyknife.armyknife-jetpack:armyknife-jetpack:1.3.14")
     "implementation"("com.eaglesakura.armyknife.armyknife-reactivex:armyknife-reactivex:1.3.0")
-    "implementation"("com.eaglesakura.firearm.firearm-experimental:firearm-experimental:1.3.0")
-    "implementation"("com.eaglesakura.firearm.firearm-channel:firearm-channel:1.3.0")
+    "implementation"("com.eaglesakura.firearm.firearm-experimental:firearm-experimental:1.3.5")
+    "implementation"("com.eaglesakura.firearm.firearm-workflow:firearm-workflow:0.1.1")
     "implementation"("com.eaglesakura.firearm.firearm-event:firearm-event:1.3.0")
 
     /**
